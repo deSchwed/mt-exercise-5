@@ -1,40 +1,37 @@
-name: "transformer_sample_config"
-joeynmt_version: "2.0.0"
+name: "transformer_bpe8000"
+joeynmt_version: "2.2.0"
 
 
 data:
-    train: "?"
-    dev:   "?"
-    test:  "?"
+    train: "data/train"
+    dev:   "data/dev"
+    test:  "data/test"
     dataset_type: "plain"
     src:
-        lang: "?"
-        level: "?"
+        lang: "nl"
+        level: "bpe"
         lowercase: False
-        max_sent_length: 100
-        # either use a vocabulary limit:
-        voc_limit: ?
-        # or (= not both!) a file with a vocabulary built before starting the training:
-        voc_file : "?"
-        tokenizer_type: "?"
+        voc_file : "shared_models/joint_vocab8000.txt"
+        tokenizer_type: "subword-nmt"
         tokenizer_cfg:
-            ?
+            num_merges: 8000
+            codes: "data/codes8000.bpe"
     trg: 
-        lang: "?"
-        level: "?"
+        lang: "de"
+        level: "bpe"
         lowercase: False
-        max_sent_length: 100
-        # either use a vocabulary limit:
-        voc_limit: ?
-        # or (= not both!) a file with a vocabulary built before starting the training:
-        voc_file : "?"
-        tokenizer_type: "?"
+        voc_file : "shared_models/joint_vocab8000.txt"
+        tokenizer_type: "subword-nmt"
         tokenizer_cfg:
-            ?
+            num_merges: 8000
+            codes: "data/codes8000.bpe"
 
 testing:
-    beam_size: ?
-    alpha: 1.0
+    beam_size: 1
+    beam_alpha: 1.0
+    eval_metrics: ["bleu"]
+    sacrebleu_cfg:
+        tokenize: "13a"
 
 training:
     random_seed: 42
@@ -43,24 +40,21 @@ training:
     learning_rate: 0.0003
     batch_size: 2048
     batch_type: "token"
-    eval_batch_size: 1024
-    eval_batch_type: "token"
     scheduling: "plateau"
     patience: 8
     weight_decay: 0.0
     decrease_factor: 0.7
-    early_stopping_metric: "ppl"
+    early_stopping_metric: "bleu"
     epochs: 10
-    validation_freq: 500
+    validation_freq: 1000
     logging_freq: 100
-    eval_metric: "bleu"
-    model_dir: "?"
-    overwrite: False
+    model_dir: "models/transformer_bpe8000"
+    overwrite: True
     shuffle: True
-    use_cuda: False
-    max_output_length: 100
+    use_cuda: True
     print_valid_sents: [0, 1, 2, 3, 4]
     label_smoothing: 0.3
+    keep_best_checkpoints: 3
 
 model:
     initializer: "xavier_uniform"
@@ -79,7 +73,7 @@ model:
             scale: True
             dropout: 0
         hidden_size: 256
-        ff_size: 512
+        ff_size: 1024
         dropout: 0
     decoder:
         type: "transformer"
@@ -90,5 +84,5 @@ model:
             scale: True
             dropout: 0
         hidden_size: 256
-        ff_size: 512
+        ff_size: 1024
         dropout: 0
