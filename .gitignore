@@ -1,0 +1,9 @@
+models
+venvs
+tools
+data/*.de
+data/*.nl
+temp_configs
+logs
+translations/*/*.de
+__pycache__
